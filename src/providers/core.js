@@ -36,14 +36,13 @@ import Packages from '../packages';
 import Tray from '../tray';
 import Websocket from '../websocket';
 import Clipboard from '../clipboard';
-import * as translations from '../locale';
-import {format, translatable, translatableFlat, getLocale} from '../utils/locale';
 import {style, script, supportedMedia, playSound} from '../utils/dom';
 import * as dnd from '../utils/dnd';
 import {BasicApplication} from '../basic-application.js';
 import {ServiceProvider} from '@osjs/common';
 import {EventEmitter} from '@osjs/event-emitter';
 import windowsServiceContract from './contracts/windows';
+import localeServiceContract from './contracts/locale';
 
 /*
  * Gets the public facting API object
@@ -179,9 +178,6 @@ export default class CoreServiceProvider extends ServiceProvider {
 
   init() {
     this.initBaseProviders();
-    this.initUtilProviders();
-    this.initTrayProvider();
-    this.initLocaleProvider();
     this.initResourceProviders();
 
     this.core.on('osjs/core:started', () => {
@@ -192,34 +188,21 @@ export default class CoreServiceProvider extends ServiceProvider {
   }
 
   initBaseProviders() {
-    const createWindow = (options = {}) => {
-      return new Window(this.core, options);
-    };
-
-    this.core.instance('osjs/websocket', (...args) => {
-      return new Websocket(...args);
-    });
-
-    this.core.instance('osjs/application', (data = {}) => {
-      return new Application(this.core, data);
-    });
-
-    this.core.instance('osjs/basic-application', (proc, win, options = {}) => {
-      return new BasicApplication(this.core, proc, win, options);
-    });
-
-    this.core.instance('osjs/window', createWindow);
-
-    this.core.singleton('osjs/windows', () => {
-      return windowsServiceContract(this.core);
-    });
+    this.core.instance('osjs/event-emitter', (...args) => new EventEmitter(...args));
+    this.core.instance('osjs/websocket', (...args) => new Websocket(...args));
+    this.core.instance('osjs/application', (data = {}) => new Application(this.core, data));
+    this.core.instance('osjs/basic-application', (proc, win, options = {}) => new BasicApplication(this.core, proc, win, options));
+    this.core.instance('osjs/window', (options = {}) => new Window(this.core, options));
+    this.core.singleton('osjs/windows', () => windowsServiceContract(this.core));
+    this.core.singleton('osjs/locale', () => localeServiceContract(this.core));
+    this.core.singleton('osjs/session', () => this.session);
+    this.core.singleton('osjs/packages', () => this.pm); // TODO Make a contract or just ignore until we get privates in TS ?
+    this.core.singleton('osjs/clipboard', () => this.clipboard);
+    this.core.singleton('osjs/dnd', () => dnd);
+    this.core.singleton('osjs/dom', () => ({script, style}));
 
     this.core.instance('osjs/event-handler', (...args) => {
       console.warn('osjs/event-handler is deprecated, use osjs/event-emitter');
-      return new EventEmitter(...args);
-    });
-
-    this.core.instance('osjs/event-emitter', (...args) => {
       return new EventEmitter(...args);
     });
 
@@ -231,17 +214,6 @@ export default class CoreServiceProvider extends ServiceProvider {
       return new WindowBehavior(this.core);
     });
 
-    this.core.singleton('osjs/session', () => this.session);
-    this.core.singleton('osjs/packages', () => this.pm); // TODO Make a contract or just ignore until we get privates in TS ?
-    this.core.singleton('osjs/clipboard', () => this.clipboard);
-  }
-
-  initUtilProviders() {
-    this.core.singleton('osjs/dnd', () => dnd);
-    this.core.singleton('osjs/dom', () => ({script, style}));
-  }
-
-  initTrayProvider() {
     this.core.instance('osjs/tray', (options) => {
       if (typeof options !== 'undefined') {
         return this.tray.create(options);
@@ -249,27 +221,6 @@ export default class CoreServiceProvider extends ServiceProvider {
 
       return this.tray;
     });
-  }
-
-  initLocaleProvider() {
-    const localeApi = {
-      format: format(this.core),
-      translate: translatable(this.core)(translations),
-      translatable: translatable(this.core),
-      translatableFlat: translatableFlat(this.core),
-      getLocale: (key = 'language') => {
-        const ref = getLocale(this.core, key);
-        return ref.userLocale || ref.defaultLocale;
-      },
-      setLocale: name => name in translations
-        ? this.core.make('osjs/settings')
-          .set('osjs/locale', 'language', name)
-          .save()
-          .then(() => this.core.emit('osjs/locale:change', name))
-        : Promise.reject(localeApi.translate('ERR_INVALID_LOCALE', name))
-    };
-
-    this.core.singleton('osjs/locale', () => localeApi);
   }
 
   initResourceProviders() {
