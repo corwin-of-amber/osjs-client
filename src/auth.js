@@ -177,4 +177,12 @@ export default class Auth {
         return true;
       });
   }
+
+  /**
+   * Get user
+   * @see Core#getUser
+   */
+  user() {
+    return this.core.getUser();
+  }
 }

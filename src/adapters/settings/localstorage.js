@@ -33,7 +33,7 @@
  * @param {Core} core Core reference
  * @param {object} [options] Adapter options
  */
-const localStorageSettings = core => ({
+const localStorageSettingsAdapter = core => ({
   clear: ns => {
     if (ns) {
       localStorage.removeItem(ns);
@@ -65,4 +65,4 @@ const localStorageSettings = core => ({
 });
 
 
-export default localStorageSettings;
+export default localStorageSettingsAdapter;

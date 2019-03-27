@@ -111,10 +111,10 @@ const methods = (core, request) => {
  * @param {Core} core Core reference
  * @param {object} [options] Adapter options
  */
-const adapter = (core) => {
+const systemVfsAdapter = (core) => {
   const request = requester(core);
 
   return methods(core, request);
 };
 
-export default adapter;
+export default systemVfsAdapter;

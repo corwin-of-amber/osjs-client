@@ -33,7 +33,7 @@
  * @param {Core} core Core reference
  * @param {object} [options] Adapter options
  */
-const nullAdapter = ({
+const nullVfsAdapter = ({
   readdir: (path, options) => Promise.resolve([]),
   readfile: (path, type, options) => Promise.resolve({body: new ArrayBuffer(), mime: 'application/octet-stream'}),
   writefile: (path, data, options) => Promise.resolve(-1),
@@ -50,4 +50,4 @@ const nullAdapter = ({
   touch: (path, options) => Promise.resolve(false)
 });
 
-export default nullAdapter;
+export default nullVfsAdapter;

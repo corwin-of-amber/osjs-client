@@ -146,7 +146,7 @@ const createView = (options) => {
 /**
  * Login UI Adapter
  */
-const create = (options, login, startHidden, $container) => {
+const loginUIAdapter = (options, login, startHidden, $container) => {
   const ee = new EventEmitter('LoginUI');
   const view = createView(options);
   const a = app(Object.assign({
@@ -176,4 +176,4 @@ const create = (options, login, startHidden, $container) => {
   return ee;
 };
 
-export default create;
+export default loginUIAdapter;

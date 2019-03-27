@@ -28,39 +28,32 @@
  * @licence Simplified BSD License
  */
 
-import Notifications from '../notifications';
-import {ServiceProvider} from '@osjs/common';
+import Window from '../../window';
 
 /**
- * OS.js Notification Service Provider
- *
- * @desc Provides methods to create notifications
+ * Window Service Contract
  */
-export default class NotificationServiceProvider extends ServiceProvider {
+const windowServiceContract = (core) => ({
+  /**
+   * @see Window#constructor
+   */
+  create(options = {}) {
+    return new Window(this.core, options);
+  },
 
-  constructor(core) {
-    super(core);
+  /**
+   * @see Window.getWindows
+   */
+  list() {
+    return Window.getWindows();
+  },
 
-    this.notifications = new Notifications(core);
+  /**
+   * @see Window.lastWindow
+   */
+  last() {
+    return Window.lastWindow();
   }
+});
 
-  destroy() {
-    this.notifications.destroy();
-  }
-
-  provides() {
-    return [
-      'osjs/notification',
-      'osjs/notifications'
-    ];
-  }
-
-  init() {
-    this.notifications.init();
-
-    this.core.singleton('osjs/notifications', () => this.notifications);
-    this.core.instance('osjs/notification', (options) => {
-      return this.notifications.create(options);
-    });
-  }
-}
+export default windowServiceContract;

@@ -53,12 +53,7 @@ export default class AuthServiceProvider extends ServiceProvider {
    * Initializes authentication
    */
   init() {
-    this.core.singleton('osjs/auth', () => ({
-      show: (cb) => this.auth.show(cb),
-      login: (values) => this.auth.login(values),
-      logout: (reload) => this.auth.logout(reload),
-      user: () => this.core.getUser()
-    }));
+    this.core.singleton('osjs/auth', () => this.auth);
 
     return this.auth.init();
   }

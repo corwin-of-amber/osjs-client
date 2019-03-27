@@ -33,7 +33,7 @@
  * @param {Core} core Core reference
  * @param {object} [options] Adapter options
  */
-const serverSettings = core => ({
+const serverSettingsAdapter = core => ({
   save: settings => core.request(core.url('/settings'), {
     method: 'post',
     body: settings
@@ -44,4 +44,4 @@ const serverSettings = core => ({
   }, 'json')
 });
 
-export default serverSettings;
+export default serverSettingsAdapter;

@@ -33,7 +33,7 @@
  * @param {Core} core Core reference
  * @param {object} [options] Adapter options
  */
-const serverAuth = (core, options) => {
+const serverAuthAdapter = (core, options) => {
   const request = (endpoint, params = {}) => core.request(endpoint, {
     method: 'POST',
     body: JSON.stringify(params)
@@ -45,4 +45,4 @@ const serverAuth = (core, options) => {
   };
 };
 
-export default serverAuth;
+export default serverAuthAdapter;

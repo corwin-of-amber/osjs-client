@@ -124,4 +124,12 @@ export default class Tray {
     }
   }
 
+  /**
+   * Gets all entries
+   * @return {TrayEntry[]} Copy of entries
+   */
+  list() {
+    return this.entries.map(e => Object.assign({}, e));
+  }
+
 }

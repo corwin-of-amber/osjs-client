@@ -33,8 +33,8 @@
  * @param {Core} core Core reference
  * @param {object} [options] Adapter options
  */
-const localStorageAuth = (core, options) => ({
+const localStorageAuthAdapter = (core, options) => ({
   login: (values) => Promise.resolve(values)
 });
 
-export default localStorageAuth;
+export default localStorageAuthAdapter;

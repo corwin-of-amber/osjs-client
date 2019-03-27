@@ -28,39 +28,50 @@
  * @licence Simplified BSD License
  */
 
-import Notifications from '../notifications';
-import {ServiceProvider} from '@osjs/common';
+import * as utils from '../../utils/vfs';
 
 /**
- * OS.js Notification Service Provider
- *
- * @desc Provides methods to create notifications
+ * VFS Service Contract
  */
-export default class NotificationServiceProvider extends ServiceProvider {
+const vfsServiceContract = (core, fs) => {
+  const iconMap = core.config('vfs.icons', {});
 
-  constructor(core) {
-    super(core);
+  return {
+    /**
+     * @see pathJoin
+     */
+    pathJoin(...args) {
+      return utils.pathJoin(...args);
+    },
 
-    this.notifications = new Notifications(core);
+    /**
+     * @see Filesystem#getMounts
+     */
+    mountpoints(all = false) {
+      return fs.getMounts(all);
+    },
+
+    /**
+     * @see Filesystem#unmount
+     */
+    unmount(name) {
+      return fs.unmount(name);
+    },
+
+    /**
+     * @see Filesystem#mount
+     */
+    mount(name) {
+      return fs.mount(name);
+    },
+
+    /**
+     * @see getFileIcon
+     */
+    icon(name) {
+      return utils.getFileIcon(iconMap)(name);
+    }
   }
+};
 
-  destroy() {
-    this.notifications.destroy();
-  }
-
-  provides() {
-    return [
-      'osjs/notification',
-      'osjs/notifications'
-    ];
-  }
-
-  init() {
-    this.notifications.init();
-
-    this.core.singleton('osjs/notifications', () => this.notifications);
-    this.core.instance('osjs/notification', (options) => {
-      return this.notifications.create(options);
-    });
-  }
-}
+export default vfsServiceContract;

@@ -43,6 +43,7 @@ import * as dnd from '../utils/dnd';
 import {BasicApplication} from '../basic-application.js';
 import {ServiceProvider} from '@osjs/common';
 import {EventEmitter} from '@osjs/event-emitter';
+import windowsServiceContract from './contracts/windows';
 
 /*
  * Gets the public facting API object
@@ -209,11 +210,9 @@ export default class CoreServiceProvider extends ServiceProvider {
 
     this.core.instance('osjs/window', createWindow);
 
-    this.core.singleton('osjs/windows', () => ({
-      create: createWindow,
-      list: () => Window.getWindows(),
-      last: () => Window.lastWindow()
-    }));
+    this.core.singleton('osjs/windows', () => {
+      return windowsServiceContract(this.core);
+    });
 
     this.core.instance('osjs/event-handler', (...args) => {
       console.warn('osjs/event-handler is deprecated, use osjs/event-emitter');
@@ -232,43 +231,23 @@ export default class CoreServiceProvider extends ServiceProvider {
       return new WindowBehavior(this.core);
     });
 
-    this.core.singleton('osjs/session', () => ({
-      save: () => this.session.save(),
-      load: (fresh = true) => this.session.load(fresh)
-    }));
-
-    this.core.singleton('osjs/packages', () => ({
-      getCompatiblePackages: (...args) => this.pm.getCompatiblePackages(...args),
-      getPackages: (...args) => this.pm.getPackages(...args),
-      register: (...args) => this.pm.register(...args),
-      launch: (...args) => this.pm.launch(...args),
-      running: () => this.pm.running
-    }));
-
-    this.core.instance('osjs/clipboard', () => this.clipboard);
+    this.core.singleton('osjs/session', () => this.session);
+    this.core.singleton('osjs/packages', () => this.pm); // TODO Make a contract or just ignore until we get privates in TS ?
+    this.core.singleton('osjs/clipboard', () => this.clipboard);
   }
 
   initUtilProviders() {
     this.core.singleton('osjs/dnd', () => dnd);
-
-    this.core.singleton('osjs/dom', () => ({
-      script,
-      style
-    }));
+    this.core.singleton('osjs/dom', () => ({script, style}));
   }
 
   initTrayProvider() {
-    const trayApi = {
-      create: (options, handler) => this.tray.create(options, handler),
-      list: () => this.tray.entries.map(e => Object.assign({}, e))
-    };
-
     this.core.instance('osjs/tray', (options) => {
       if (typeof options !== 'undefined') {
-        return trayApi.create(options);
+        return this.tray.create(options);
       }
 
-      return trayApi;
+      return this.tray;
     });
   }
 

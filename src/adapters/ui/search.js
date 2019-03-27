@@ -107,7 +107,7 @@ const createView = (core, fs, icon, _) => {
 /**
  * Search UI Adapter
  */
-const create = (core, $element) => {
+const searchUIAdapter = (core, $element) => {
   const _ = core.make('osjs/locale').translate;
   const fs = core.make('osjs/fs');
   const {icon} = core.make('osjs/theme');
@@ -183,4 +183,4 @@ const create = (core, $element) => {
   return ee;
 };
 
-export default create;
+export default searchUIAdapter;

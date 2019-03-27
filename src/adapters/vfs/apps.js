@@ -33,7 +33,7 @@
  * @param {Core} core Core reference
  * @param {object} [options] Adapter options
  */
-const adapter = (core) => {
+const appsVfsAdapter = (core) => {
   const pkgs = core.make('osjs/packages');
 
   return {
@@ -53,4 +53,4 @@ const adapter = (core) => {
   };
 };
 
-export default adapter;
+export default appsVfsAdapter;

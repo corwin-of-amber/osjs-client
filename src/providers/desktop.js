@@ -61,11 +61,7 @@ export default class DesktopServiceProvider extends ServiceProvider {
     this.desktop = new Desktop(this.core, this.options);
     this.desktop.init();
 
-    this.core.singleton('osjs/desktop', () => ({
-      addContextMenuEntries: entries => this.desktop.addContextMenu(entries),
-      applySettings: settings => this.desktop.applySettings(settings),
-      getRect: () => this.desktop.getRect()
-    }));
+    this.core.singleton('osjs/desktop', () => this.desktop);
 
     this.core.on('osjs/core:started', () => {
       this.desktop.applySettings();
