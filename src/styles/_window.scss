@@ -91,10 +91,7 @@ $direction-list: "nw" "sw" "ne" "se" "n" "s" "w" "e";
   box-sizing: border-box;
   flex: 0 0;
   min-height: 2.2em;
-
-  & > div {
-    height: 100%;
-  }
+  align-items: stretch;
 }
 
 .osjs-window-icon {
