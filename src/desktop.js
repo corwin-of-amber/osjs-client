@@ -233,6 +233,7 @@ export default class Desktop extends EventEmitter {
    */
   initUIEvents() {
     this.core.on(['osjs/panel:create', 'osjs/panel:destroy'], (panel, panels = []) => {
+      let updateDesktopArea = () => {
       this.subtract = createPanelSubtraction(panel, panels);
 
       try {
@@ -243,6 +244,9 @@ export default class Desktop extends EventEmitter {
       }
 
       this.core.emit('osjs/desktop:transform', this.getRect());
+      }
+      updateDesktopArea();
+      window.requestAnimationFrame(updateDesktopArea);
     });
 
     this.core.on('osjs/window:transitionend', (...args) => {

@@ -882,6 +882,7 @@ export default class Window extends EventEmitter {
     if (update) {
       if (oldValue !== value) {
         logger.debug('Window::_setState()', name, value);
+        this.core.emit('osjs/window:change', this, name, value);
       }
 
       this._updateAttributes();
